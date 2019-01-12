@@ -6,7 +6,9 @@ layout(location = 1) in vec3 vertcolor;
 
 out vec3 fragcolor;
 
-uniform mat4x3 projection;
+uniform int dfc;
+uniform mat4 to3D;
+uniform mat4 view;
 uniform float time;
 uniform float xzAngle;
 uniform float xyAngle;
@@ -26,22 +28,20 @@ void main(){
 	const float PI=3.14159265;
 	float angle=time;
 
-
-	float w=.5/(1.5-vertpos.w);
-//	mat4x3 projection = mat4x3(
-//		w,0,0,0,
-//		0,w,0,0,
-//		0,0,w,0
-//	);
-    gl_Position=vec4(
-					projection*
+	
+    vec4 pos=(		
 					rotateXY(radians(xyAngle))*
 					rotateXZ(radians(xzAngle))*
 					rotateYZ(radians(yzAngle))*
 					rotateXW(radians(xwAngle))*
 					rotateYW(radians(ywAngle))*
 					rotateZW(radians(zwAngle))*
-					vertpos,1);
+					vertpos);
+	if(dfc==1)
+		gl_Position=vec4((to3D*pos).xyz,1);
+	else
+		gl_Position=vec4(to3D*view*pos);
+
 	fragcolor=vertcolor;
 }
 
